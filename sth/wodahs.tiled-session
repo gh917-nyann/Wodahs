@@ -1,0 +1,325 @@
+{
+    "activeFile": "room1_level3_S.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx": {
+            "expandedGroupLayers": [
+                12
+            ],
+            "scale": 0.75,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": -81.33333333333326,
+                "y": -0.6666666666667425
+            }
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Clouds_in_tiles": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Clouds_x32": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Details": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Fairys": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Flora1x32": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Flora2x32": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Flying_stone": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Objects": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Predator_plant": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Skyx32": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Spikes": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#Tileset": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#cave_entrance": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#chest": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#key": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#shinies": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/Map.tmx#stalactites": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -263,
+                "y": 1
+            }
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Details": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Fairys": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Flying_stone": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Full_bgx32": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Objects": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Predator_plant": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Spikes": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#Tileset": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#animation": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#chest": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#key": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#shinies": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#stalactites": {
+            "scaleInDock": 1
+        },
+        "C:/Users/ADMIN/Downloads/ggdl/craftpix-net-926878-free-platformer-game-tileset-pixel-art/TILED_files/aaa.tmx#для скринов32": {
+            "scaleInDock": 1
+        },
+        "background.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.03125,
+            "scaleInEditor": 0.5
+        },
+        "block.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "block2.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "port.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "portal.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 0.33
+        },
+        "room1_level1.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 530,
+                "y": 347.99999999999994
+            }
+        },
+        "room1_level1_O.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 526.6666666666667,
+                "y": 427.33333333333326
+            }
+        },
+        "room1_level1_S.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 517.3333333333333,
+                "y": 367.33333333333326
+            }
+        },
+        "room1_level2_O.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 566.6666666666667,
+                "y": 473.99999999999994
+            }
+        },
+        "room1_level2_S.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 350.4073992512662
+            }
+        },
+        "room1_level3_O.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room1_level3_S.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room2_level1.tmx": {
+            "scale": 0.8134374999999999,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 423.5113330772185,
+                "y": 355.89704187475996
+            }
+        },
+        "room2_level1_O.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 752,
+                "y": 497
+            }
+        },
+        "room2_level1_S.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room2_level2_O.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room2_level2_S.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room3_level1_O (2).tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 480.4228143580709,
+                "y": 319.75335829112527
+            }
+        },
+        "room3_level1_O.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room3_level1_S.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room3_level2_O.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "room3_level2_S.tmx": {
+            "scale": 0.9460416666666667,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 479.89429641048235,
+                "y": 319.75335829112527
+            }
+        },
+        "sth.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/ADMIN/Desktop/DSA/Wodahs/sth",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "room1_level2_O.tmx",
+        "room1_level2_S.tmx",
+        "room2_level1_O.tmx",
+        "room1_level3_S.tmx",
+        "room1_level1_O.tmx",
+        "room1_level1_S.tmx",
+        "room3_level2_O.tmx",
+        "room3_level1_O.tmx",
+        "room2_level2_O.tmx",
+        "room2_level2_S.tmx",
+        "room3_level1_S.tmx",
+        "room3_level2_S.tmx",
+        "room1_level3_O.tmx",
+        "room2_level1_S.tmx"
+    ],
+    "project": "wodahs.tiled-project",
+    "recentFiles": [
+        "room1_level2_O.tmx",
+        "room1_level2_S.tmx",
+        "room2_level1_O.tmx",
+        "room2_level1_S.tmx",
+        "room1_level3_O.tmx",
+        "room3_level2_S.tmx",
+        "room3_level1_S.tmx",
+        "room2_level2_S.tmx",
+        "room2_level2_O.tmx",
+        "room3_level1_O.tmx",
+        "room3_level2_O.tmx",
+        "room1_level1_S.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    },
+    "tileset.type": 0
+}
