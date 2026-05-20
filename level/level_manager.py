@@ -30,7 +30,7 @@ class LevelManager:
         self.current_room = 0
         self.current_world = 0
         
-        self.highest_level = 2
+        self.highest_level = 0
         self.highest_room = 0
         
         self.tiles = []
