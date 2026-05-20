@@ -30,7 +30,7 @@ class LevelManager:
         self.current_room = 0
         self.current_world = 0
         
-        self.highest_level = 0
+        self.highest_level = 2
         self.highest_room = 0
         
         self.tiles = []
@@ -45,6 +45,13 @@ class LevelManager:
         
         self.player_spawn_x = 0
         self.player_spawn_y = 0
+
+        self.spawn_points = []
+        self.monsters_left_to_spawn = 0
+        self.spawn_timer = 0
+        self.max_active_monsters = 5
+        self.spawn_amount_per_wave = 3
+        
         self.load_room()
 
     def flip_world(self):
@@ -87,6 +94,8 @@ class LevelManager:
         self.tiles.clear()
         self.monsters.clear()
         self.doors.clear()
+        self.spawn_points.clear()
+        self.monsters_left_to_spawn = 0
         
         room_num = self.current_room + 1
         level_num = self.current_level + 1
@@ -138,10 +147,8 @@ class LevelManager:
                                 self.monsters.append(b)
                                 
                             elif layer_name == 'monsters':
-                                monster_type = random.choice(["MELEE", "RANGED"])
-                                m = Monster(pixel_x, pixel_y, m_type=monster_type)
-                                m.world_id = w_idx
-                                self.monsters.append(m)
+                                self.spawn_points.append({'x': pixel_x, 'y': pixel_y, 'world_id': w_idx})
+                                self.monsters_left_to_spawn += 1
 
                 elif isinstance(layer, pytmx.TiledObjectGroup):
                     for obj in layer:
@@ -157,10 +164,8 @@ class LevelManager:
                             b = Boss(obj.x, obj.y)
                             self.monsters.append(b)
                         elif layer_name == 'monsters':
-                            monster_type = random.choice(["MELEE", "RANGED"])
-                            m = Monster(obj.x, obj.y, m_type=monster_type)
-                            m.world_id = w_idx
-                            self.monsters.append(m)
+                            self.spawn_points.append({'x': obj.x, 'y': obj.y, 'world_id': w_idx})
+                            self.monsters_left_to_spawn += 1
 
     def check_room_transition(self, player):
         """Kiểm tra điều kiện chuyển phòng hoặc chiến thắng.
@@ -170,7 +175,7 @@ class LevelManager:
         Output:
         - Trả về False, True, "LEVEL_UP" hoặc "WIN" tùy trạng thái.
         """
-        if len(self.monsters) > 0:
+        if len(self.monsters) > 0 or self.monsters_left_to_spawn > 0:
             return False
 
         for door in self.doors:
@@ -215,6 +220,22 @@ class LevelManager:
         Output:
         - Không trả về, cập nhật tile, quái và loại bỏ quái chết.
         """
+        if len(self.monsters) < self.max_active_monsters and self.monsters_left_to_spawn > 0 and len(self.spawn_points) > 0:
+            self.spawn_timer -= dt
+            if self.spawn_timer <= 0:
+                for _ in range(self.spawn_amount_per_wave):
+                    if len(self.monsters) >= self.max_active_monsters or self.monsters_left_to_spawn <= 0:
+                        break
+                        
+                    sp = random.choice(self.spawn_points)
+                    monster_type = random.choice(["MELEE", "RANGED"])
+                    new_m = Monster(sp['x'], sp['y'], m_type=monster_type)
+                    new_m.world_id = sp['world_id']
+                    
+                    self.monsters.append(new_m)
+                    self.monsters_left_to_spawn -= 1
+                self.spawn_timer = 1.5
+
         for tile in self.tiles:
             if hasattr(tile, 'update'): 
                 tile.update(dt)
@@ -260,7 +281,7 @@ class LevelManager:
             if tile.world_id == self.current_world:
                 tile.draw(surface)
         
-        if len(self.monsters) == 0:
+        if len(self.monsters) == 0 and self.monsters_left_to_spawn == 0:
             for door in self.doors:
                 if door['world_id'] == self.current_world:
                     if door['image']:

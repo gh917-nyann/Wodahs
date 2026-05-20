@@ -6,6 +6,7 @@ Mô tả:
 Author: DGHuy
 """
 import pygame
+import os
 from entities.skill import *
 from entities.item import *
 
@@ -39,7 +40,14 @@ class Player:
         self.is_dashing = False
         self.dash_timer = 0
         self.dash_duration = 0.15
-        self.rect = pygame.Rect(self.x, self.y, 32, 32)
+        
+        self.hitbox_w = 32
+        self.hitbox_h = 32
+        self.rect = pygame.Rect(self.x, self.y, self.hitbox_w, self.hitbox_h)
+        
+        self.draw_width = 72
+        self.draw_height = 72
+        
         self.on_ground = False
         self.attack_freeze = 0 
         self.can_dash = True
@@ -56,6 +64,68 @@ class Player:
         self.health_potion = HealthPotion(heal_amount=300, cooldown=5)
         self.mana_potion = ManaPotion(restore_amount=200, cooldown=5)
         self.bomb_item = BombItem(cooldown=3, fuse_time=2.0, damage=200, radius=80)
+        
+        self.width = self.hitbox_w
+        self.height = self.hitbox_h
+        self.animations = {'idle': [], 'walk': [], 'jump': [], 'attack': []}
+        self.current_state = 'idle'
+        self.frame_index = 0
+        self.anim_timer = 0
+        self.anim_speeds = {
+            'idle': 0.2,
+            'walk': 0.08,
+            'jump': 0.06,
+            'attack': 0.04
+        }
+        self.load_animations()
+
+    def load_animations(self):
+        """Tải ảnh sprite sheet, cắt frame, scale to và lưu vào dictionary.
+
+        Mô tả:
+        - Tải các file dải ảnh dài uncropped từ image_0.png... image_3.png.
+        - Cắt frame, scale tất cả uncropped frames lên self.draw_width x self.draw_height.
+        """
+        base_path = "assets/player/"
+        anim_steps = {'idle': 8, 'walk': 8, 'jump': 13, 'attack': 5}
+        
+        for state, steps in anim_steps.items():
+            file_path = f"{base_path}{state}.png"
+            if os.path.exists(file_path):
+                sheet = pygame.image.load(file_path).convert_alpha()
+                sheet_w, sheet_h = sheet.get_size()
+                frame_w = sheet_w // steps
+                frame_h = sheet_h
+                
+                for i in range(steps):
+                    frame = pygame.Surface((frame_w, frame_h), pygame.SRCALPHA)
+                    frame.blit(sheet, (0, 0), (i * frame_w, 0, frame_w, frame_h))
+                    frame = pygame.transform.scale(frame, (self.draw_width, self.draw_height))
+                    self.animations[state].append(frame)
+
+    def update_animation(self, dt):
+        if self.attack_freeze > 0:
+            new_state = 'attack'
+        elif not self.on_ground:
+            new_state = 'jump'
+        elif self.vx != 0:
+            new_state = 'walk'
+        else:
+            new_state = 'idle'
+
+        if new_state != self.current_state:
+            self.current_state = new_state
+            self.frame_index = 0
+            self.anim_timer = 0
+
+        if len(self.animations[self.current_state]) > 0:
+            self.anim_timer += dt
+            current_speed = self.anim_speeds.get(self.current_state, 0.1)
+            if self.anim_timer >= current_speed:
+                self.anim_timer = 0
+                self.frame_index += 1
+                if self.frame_index >= len(self.animations[self.current_state]):
+                    self.frame_index = 0
 
     def inp(self, events, tiles, monsters):
         """Xử lý đầu vào phím và chuột cho player.
@@ -78,11 +148,15 @@ class Player:
                         self.move("dash")
                         self.can_dash = False
                 elif event.key == pygame.K_q:
+                    if len(self.animations[self.current_state]) > 0:
+                        current_img = self.animations[self.current_state][self.frame_index]
+                    else:
+                        current_img = pygame.Surface((self.draw_width, self.draw_height))                
                     if self.mana >= 50 and not self.shadow_clone.is_active and self.shadow_clone.current_cooldown <= 0:
-                        self.shadow_clone.use(self.x, self.y)
+                        self.shadow_clone.use(self.x, self.y, current_img, self.facing_right)
                         self.mana -= 50
                     elif self.shadow_clone.is_active:
-                        self.shadow_clone.use(self.x, self.y)
+                        self.shadow_clone.use(self.x, self.y, current_img, self.facing_right)
                         self.x = self.shadow_clone.rect.x
                         self.y = self.shadow_clone.rect.y
                 elif event.key == pygame.K_e:
@@ -99,6 +173,9 @@ class Player:
                     self.mana_potion.use(self)
                 elif event.key == pygame.K_3:
                     self.bomb_item.use(self.x, self.y, self.facing_right)
+                elif event.key == pygame.K_k:
+                    for monster in monsters:
+                        monster.health = 0
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -226,6 +303,7 @@ class Player:
         self.health_potion.update(dt)
         self.mana_potion.update(dt)
         self.bomb_item.update(dt, monsters, solid_rects)
+        self.update_animation(dt)
 
     def check_collision_x(self, tiles, dt, monsters):
         """Kiểm tra và xử lý va chạm theo trục X.
@@ -324,6 +402,14 @@ class Player:
                     self.rect.top = monster.rect.bottom
                 self.y = self.rect.y
                 self.vy = 0
+        
+        self.rect.y += 1
+        for tile in tiles:
+            if getattr(tile, 'is_solid', False) and self.rect.colliderect(tile.rect):
+                if not getattr(tile, 'is_one_way', False) or (self.vy >= 0 and self.old_rect.bottom <= tile.rect.top + 10):
+                    self.on_ground = True
+                    break
+        self.rect.y -= 1
 
     def draw(self, surface):
         """Vẽ player và các hiệu ứng liên quan.
@@ -334,13 +420,27 @@ class Player:
         - Không trả về, vẽ player, kỹ năng và UI.
         """
         self.shadow_area.draw(surface)
-        self.shadow_clone.draw(surface)
+
+        offset_x = - (self.draw_width - self.hitbox_w) // 2
+        offset_y = self.hitbox_h - self.draw_height
+        self.shadow_clone.draw(surface, offset_x, offset_y)
         
-        pygame.draw.rect(surface, (255, 255, 255), self.rect)
-        if self.facing_right:
-            pygame.draw.circle(surface, (255, 0, 0), (self.rect.right - 8, self.rect.centery), 4)
+        current_anim_list = self.animations[self.current_state]
+        if len(current_anim_list) > 0:
+            img = current_anim_list[self.frame_index]
+            if not self.facing_right:
+                img = pygame.transform.flip(img, True, False)
+            
+            draw_x = self.rect.x - (self.draw_width - self.hitbox_w) // 2
+            draw_y = self.rect.bottom - self.draw_height
+            surface.blit(img, (draw_x, draw_y))
+            
         else:
-            pygame.draw.circle(surface, (255, 0, 0), (self.rect.left + 8, self.rect.centery), 4)
+            pygame.draw.rect(surface, (255, 255, 255), self.rect)
+            if self.facing_right:
+                pygame.draw.circle(surface, (255, 0, 0), (self.rect.right - 8, self.rect.centery), 4)
+            else:
+                pygame.draw.circle(surface, (255, 0, 0), (self.rect.left + 8, self.rect.centery), 4)
             
         self.shadow_sword.draw(surface)
         if hasattr(self.basic_attack, 'draw'):
@@ -368,7 +468,53 @@ class Player:
             font = pygame.font.SysFont(None, 36)
             text = font.render(f"Combo: {self.combo_count}", True, (255, 200, 0))
             surface.blit(text, (20, 70))
+            
         self.bomb_item.draw(surface)
+
+        font_key = pygame.font.SysFont(None, 18) 
+        font_cd = pygame.font.SysFont(None, 22)
+        
+        slots = [
+            ("Q", "Clone", self.shadow_clone.current_cooldown, self.shadow_clone.cooldown),
+            ("E", "Sword", self.shadow_sword.current_cooldown, self.shadow_sword.cooldown),
+            ("R", "Area", self.shadow_area.current_cooldown, self.shadow_area.cooldown),
+            ("1", "HP", self.health_potion.current_cooldown, self.health_potion.cooldown),
+            ("2", "MP", self.mana_potion.current_cooldown, self.mana_potion.cooldown),
+            ("3", "Bomb", self.bomb_item.current_cooldown, self.bomb_item.cooldown)
+        ]
+        
+        slot_size = 40  
+        spacing = 8     
+        
+        total_height = len(slots) * (slot_size + spacing) - spacing
+        
+        start_x = 0 
+        start_y = (surface.get_height() - total_height) // 2 
+        
+        for i, (key, name, cd_current, cd_max) in enumerate(slots):
+            x = start_x
+            y = start_y + i * (slot_size + spacing)
+            
+            pygame.draw.rect(surface, (30, 30, 30), (x, y, slot_size, slot_size))
+            pygame.draw.rect(surface, (150, 150, 150), (x, y, slot_size, slot_size), 2)
+            
+            key_text = font_key.render(key, True, (255, 215, 0))
+            surface.blit(key_text, (x + 3, y + 3))
+            
+            name_text = font_key.render(name, True, (200, 200, 200))
+            surface.blit(name_text, (x + 3, y + slot_size - 15))
+            
+            if cd_current > 0:
+                cd_ratio = cd_current / cd_max
+                overlay_height = int(slot_size * cd_ratio)
+                
+                s = pygame.Surface((slot_size, overlay_height), pygame.SRCALPHA)
+                s.fill((0, 0, 0, 150))
+                surface.blit(s, (x, y + (slot_size - overlay_height)))
+                
+                cd_text = font_cd.render(f"{cd_current:.1f}", True, (255, 100, 100))
+                text_rect = cd_text.get_rect(center=(x + slot_size // 2, y + slot_size // 2))
+                surface.blit(cd_text, text_rect)
 
     def clear_active_states(self):
         """Xóa trạng thái kỹ năng đang hoạt động và reset cooldown.

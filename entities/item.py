@@ -29,7 +29,7 @@ class HealthPotion:
         self.heal_amount = heal_amount
         self.cooldown = cooldown
         self.current_cooldown = 0
-        self.quantity = 3
+        self.quantity = 9999
         
     def use(self, player):
         """
@@ -74,7 +74,7 @@ class ManaPotion:
         self.restore_amount = restore_amount
         self.cooldown = cooldown
         self.current_cooldown = 0
-        self.quantity = 3 
+        self.quantity = 9999
         
     def use(self, player):
         """
@@ -124,7 +124,7 @@ class BombItem:
         self.fuse_time = fuse_time
         self.damage = damage
         self.radius = radius
-        self.quantity = 5
+        self.quantity = 9999
         
         self.active_bombs = []
 

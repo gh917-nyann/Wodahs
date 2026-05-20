@@ -2,7 +2,8 @@
 
 Mô tả:
     - Điều khiển AI boss, trạng thái giận dữ, và đòn tấn công.
-    - Tạo đạn, triệu hồi quái và vẽ boss lên màn hình.
+    - Tạo đạn, triệu hồi quái và vẽ boss lên màn hình bằng ảnh tĩnh.
+    - Cảnh báo chớp đỏ màn hình khi chuyển pha giận dữ.
 Author: DGHuy
 """
 import pygame
@@ -19,7 +20,7 @@ class Boss:
         - x (float): Tọa độ X ban đầu.
         - y (float): Tọa độ Y ban đầu.
         Output:
-        - Tạo boss với máu, sát thương, hitbox và trạng thái ban đầu.
+        - Tạo boss với máu, sát thương, hitbox và hình ảnh tĩnh.
         """
         self.x = x
         self.y = y
@@ -45,6 +46,22 @@ class Boss:
         
         self.touch_damage_cooldown = 0
         self.touch_damage_delay = 0.5
+        
+        self.enrage_flash_timer = 0
+        
+        self.image = None
+        self.load_image()
+
+    def load_image(self):
+        """Tải ảnh tĩnh cho Boss từ thư mục assets."""
+        try:
+            img = pygame.image.load("assets/monsters/boss.png").convert_alpha()
+            self.image = pygame.transform.scale(img, (self.rect.width, self.rect.height))
+        except Exception as e:
+            print(f"Lỗi tải ảnh Boss: {e}")
+            self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
+            self.image.fill((0, 0, 0))
+            pygame.draw.rect(self.image, (255, 0, 0), self.image.get_rect(), 2)
 
     def take_damage(self, amount, knockback_force=0, knockback_dir=1):
         """Boss nhận sát thương và kích hoạt trạng thái giận dữ nếu thấp máu.
@@ -60,17 +77,10 @@ class Boss:
         if self.health < self.max_health * 0.4 and not self.is_enraged:
             self.is_enraged = True
             self.speed *= 1.4
+            self.enrage_flash_timer = 1.5
 
     def spawn_monsters(self, player, all_monsters, current_world):
-        """Triệu hồi quái vật hỗ trợ khi boss giận dữ.
-
-        Input:
-        - player (Player): Player để xác định vị trí spawn.
-        - all_monsters (list): Danh sách quái để thêm quái mới.
-        - current_world (int): Thế giới để gán cho quái.
-        Output:
-        - Thêm quái mới vào all_monsters.
-        """
+        """Triệu hồi quái vật hỗ trợ khi boss giận dữ."""
         num_to_spawn = 3 if self.is_enraged else 1
         for _ in range(num_to_spawn):
             spawn_x = player.x + random.randint(-200, 200)
@@ -81,13 +91,7 @@ class Boss:
             all_monsters.append(new_m)
 
     def attack_circle(self):
-        """Tạo một vòng đạn quây quanh boss.
-
-        Input:
-        - Không có.
-        Output:
-        - Thêm projectile vào self.projectiles.
-        """
+        """Tạo một vòng đạn quây quanh boss."""
         num_bullets = 16 if self.is_enraged else 8
         for i in range(num_bullets):
             angle = (360 / num_bullets) * i
@@ -102,18 +106,13 @@ class Boss:
             })
 
     def update(self, dt, player, all_monsters, current_world):
-        """Cập nhật hành vi boss, đạn và va chạm với player.
-
-        Input:
-        - dt (float): Delta time.
-        - player (Player): Player mục tiêu.
-        - all_monsters (list): Danh sách quái để thêm summon.
-        - current_world (int): Thế giới hiện tại.
-        Output:
-        - Cập nhật vị trí, trạng thái, đạn và sát thương boss.
-        """
+        """Cập nhật hành vi boss, đạn và va chạm với player."""
         if self.touch_damage_cooldown > 0:
             self.touch_damage_cooldown -= dt
+            
+        # Cập nhật thời gian chớp đỏ
+        if self.enrage_flash_timer > 0:
+            self.enrage_flash_timer -= dt
 
         for p in self.projectiles[:]:
             p['timer'] -= dt
@@ -193,34 +192,21 @@ class Boss:
             self.touch_damage_cooldown = self.touch_damage_delay
 
     def draw(self, surface):
-        """Vẽ boss và thanh máu lên màn hình.
-
-        Input:
-        - surface (pygame.Surface): Surface để render boss.
-        Output:
-        - Không trả về, vẽ trực tiếp boss, mắt và thanh máu.
-        """
-        color = (255, 0, 0) if self.is_enraged else (75, 0, 130)
-        pygame.draw.rect(surface, color, self.rect)
+        """Vẽ boss, đạn, thanh máu và hiệu ứng toàn màn hình."""
         
-        eye_color = (255, 255, 255)
-        pygame.draw.circle(surface, eye_color, (self.rect.x + 20, self.rect.y + 30), 5)
-        pygame.draw.circle(surface, eye_color, (self.rect.x + 60, self.rect.y + 30), 5)
+        if self.image:
+            surface.blit(self.image, self.rect)
         
         for p in self.projectiles:
-            p_color = (255, 100, 0) if self.is_enraged else (100, 255, 100)
+            p_color = (0, 255, 255) if self.is_enraged else (0, 100, 255)
             pygame.draw.circle(surface, p_color, p['rect'].center, 10)
 
         health_ratio = max(0, self.health / self.max_health)
         pygame.draw.rect(surface, (50, 50, 50), (280, 20, 400, 20))
         pygame.draw.rect(surface, (255, 0, 0), (280, 20, 400 * health_ratio, 20))
 
-    def draw_silhouette(self, surface):
-        """Vẽ bóng mờ boss khi boss không cùng thế giới.
-
-        Input:
-        - surface (pygame.Surface): Surface để render.
-        Output:
-        - Không trả về, vẽ bóng mờ nếu cần.
-        """
-        pass
+        if self.enrage_flash_timer > 0:
+            if int(self.enrage_flash_timer / 0.15) % 2 == 0:
+                flash_surface = pygame.Surface((surface.get_width(), surface.get_height()), pygame.SRCALPHA)
+                flash_surface.fill((255, 0, 0, 70)) 
+                surface.blit(flash_surface, (0, 0))

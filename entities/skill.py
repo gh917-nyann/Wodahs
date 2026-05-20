@@ -110,16 +110,6 @@ class BasicAttack:
             self.update_hitbox(px, py, facing_right)
             self.check_hit(monsters, facing_right)
 
-    def draw(self, surface):
-        """
-        Chức năng: Vẽ hitbox đòn đánh.
-
-        Input:
-        - surface (pygame.Surface): Surface dùng để render.
-        """
-        if self.active_timer > 0:
-            pygame.draw.rect(surface, (255, 50, 50), self.hitbox)
-
 
 class ShadowClone:
     """
@@ -149,20 +139,35 @@ class ShadowClone:
         self.rect = pygame.Rect(0, 0, 32, 32)
         self.dash_hitbox = None
         self.monsters_hit = []
+        self.silhouette = None
+        self.facing_right = True
 
-    def use(self, player_x, player_y):
+    def use(self, player_x, player_y, player_surface, facing_right):
         """
         Chức năng: Kích hoạt tạo ảo ảnh hoặc lướt về ảo ảnh đang có.
 
         Input:
         - player_x (float): Tọa độ X của player.
         - player_y (float): Tọa độ Y của player.
+        - player_surface (pygame.Surface): Hình ảnh hiện tại của player.
+        - facing_right (bool): Hướng nhìn hiện tại của player.
         """
         if not self.is_active and self.current_cooldown <= 0:
             self.is_active = True
             self.active_timer = self.duration
             self.rect.x = player_x
             self.rect.y = player_y
+            self.facing_right = facing_right
+            
+            # Tạo silhouette
+            sil = player_surface.copy()
+            # Tô đen hoàn toàn (RGB: 0,0,0) nhưng giữ lại độ trong suốt gốc
+            # Lấy vùng phủ (color key/alpha), lấp đầy bằng màu đen, 
+            # chỉ giữ lại vùng có pixel, kết hợp độ trong suốt
+            temp_surface = pygame.Surface(sil.get_size()).convert_alpha()
+            temp_surface.fill((0, 0, 0, 200)) # Màu đen, mờ 200/255
+            sil.blit(temp_surface, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+            self.silhouette = sil
             
         elif self.is_active:
             min_x = min(player_x, self.rect.x)
@@ -176,6 +181,7 @@ class ShadowClone:
             self.is_active = False
             self.active_timer = 0
             self.current_cooldown = self.cooldown
+            self.silhouette = None
 
     def update(self, dt, monsters):
         """
@@ -192,6 +198,7 @@ class ShadowClone:
             self.active_timer -= dt
             if self.active_timer <= 0:
                 self.is_active = False
+                self.silhouette = None
                 self.current_cooldown = self.cooldown
                 
         if self.dash_hitbox:
@@ -203,15 +210,21 @@ class ShadowClone:
                         self.monsters_hit.append(monster)
             self.dash_hitbox = None
 
-    def draw(self, surface):
+    def draw(self, surface, offset_x=0, offset_y=0):
         """
-        Chức năng: Vẽ hình ảnh phân thân.
+        Chức năng: Vẽ hình ảnh phân thân dạng bóng đen.
 
         Input:
         - surface (pygame.Surface): Surface dùng để render.
+        - offset_x (int): Độ lệch X (dùng cho canvas to/hitbox bé).
+        - offset_y (int): Độ lệch Y (dùng cho canvas to/hitbox bé).
         """
-        if self.is_active:
-            pygame.draw.rect(surface, (100, 100, 150), self.rect)
+        if self.is_active and self.silhouette:
+            img = self.silhouette
+            if not self.facing_right:
+                img = pygame.transform.flip(img, True, False)
+                
+            surface.blit(img, (self.rect.x + offset_x, self.rect.y + offset_y))
 
 
 class ShadowSword:
