@@ -173,9 +173,9 @@ class Player:
                     self.mana_potion.use(self)
                 elif event.key == pygame.K_3:
                     self.bomb_item.use(self.x, self.y, self.facing_right)
-                elif event.key == pygame.K_k:
-                    for monster in monsters:
-                        monster.health = 0
+                # elif event.key == pygame.K_k:
+                #     for monster in monsters:
+                #         monster.health = 0
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
