@@ -1,4 +1,5 @@
-"""File chính của game Wodahs.
+"""
+File chính của game Wodahs.
 
 Mô tả:
     - Khởi tạo Pygame, cửa sổ, font và trạng thái menu.
@@ -12,6 +13,61 @@ import random
 import math
 from entities.player import Player
 from level.level_manager import LevelManager
+
+
+class GameStateStack:
+    """
+    Chức năng chính: Quản lý trạng thái màn hình game bằng cấu trúc dữ liệu Stack.
+
+    Chi tiết:
+        - Lưu trạng thái màn hình theo cơ chế LIFO.
+        - Khi chuyển sang màn mới thì đưa trạng thái mới vào Stack.
+        - Khi bấm BACK thì lấy trạng thái hiện tại ra khỏi Stack để quay lại màn trước.
+        - Khi cần chuyển thẳng về một màn cụ thể thì reset Stack.
+    """
+    def __init__(self, initial_state):
+        """
+        Khởi tạo Stack với trạng thái ban đầu.
+
+        Input:
+        - initial_state (str): Trạng thái đầu tiên của game.
+        """
+        self.stack = [initial_state]
+
+    def current(self):
+        """
+        Lấy trạng thái hiện tại của game.
+
+        Output:
+        - Trả về trạng thái nằm trên đỉnh Stack.
+        """
+        return self.stack[-1]
+
+    def push(self, state):
+        """
+        Thêm trạng thái mới vào Stack.
+
+        Input:
+        - state (str): Trạng thái cần chuyển tới.
+        """
+        self.stack.append(state)
+
+    def pop(self):
+        """
+        Quay lại trạng thái trước đó bằng cách xóa trạng thái hiện tại.
+        """
+        if len(self.stack) > 1:
+            self.stack.pop()
+
+    def reset(self, state):
+        """
+        Đặt lại Stack về một trạng thái duy nhất.
+
+        Input:
+        - state (str): Trạng thái cần đặt lại.
+        """
+        self.stack = [state]
+
 
 def restart_game(player, level_manager):
     """Đặt lại trạng thái player và tải lại phòng hiện tại.
@@ -47,7 +103,7 @@ ROOMS_PER_LEVEL = [3, 3, 1]
 level_manager = LevelManager(rooms_per_level=ROOMS_PER_LEVEL)
 player = Player(level_manager.player_spawn_x, level_manager.player_spawn_y)
 
-game_state = "MAIN_MENU"
+game_states = GameStateStack("MAIN_MENU")
 selected_lvl_idx = 0
 
 play_btn_rect = pygame.Rect(960 // 2 - 100, 640 // 2 - 40, 200, 50)
@@ -145,6 +201,7 @@ while running:
     dt = clock.tick(60) / 1000.0
     events = pygame.event.get()
     mouse_pos = pygame.mouse.get_pos()
+    game_state = game_states.current()
     
     for event in events:
         if event.type == pygame.QUIT:
@@ -153,30 +210,30 @@ while running:
         if game_state == "MAIN_MENU":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if play_btn_rect.collidepoint(mouse_pos):
-                    game_state = "LEVEL_SELECT"
+                    game_states.push("LEVEL_SELECT")
                 elif htp_btn_rect.collidepoint(mouse_pos):
-                    game_state = "HOW_TO_PLAY"
+                    game_states.push("HOW_TO_PLAY")
                 elif quit_btn_rect.collidepoint(mouse_pos):
                     running = False
 
         elif game_state == "HOW_TO_PLAY":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if back_btn_rect.collidepoint(mouse_pos):
-                    game_state = "MAIN_MENU"
+                    game_states.pop()
 
         elif game_state == "LEVEL_SELECT":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if back_btn_rect.collidepoint(mouse_pos):
-                    game_state = "MAIN_MENU"
+                    game_states.pop()
                 for i, btn in enumerate(lvl_btn_rects):
                     if btn.collidepoint(mouse_pos) and i <= level_manager.highest_level:
                         selected_lvl_idx = i
-                        game_state = "ROOM_SELECT"
+                        game_states.push("ROOM_SELECT")
 
         elif game_state == "ROOM_SELECT":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if back_btn_rect.collidepoint(mouse_pos):
-                    game_state = "LEVEL_SELECT"
+                    game_states.pop()
                 for r_idx in range(ROOMS_PER_LEVEL[selected_lvl_idx]):
                     r_btn = pygame.Rect(960 // 2 - 100, 200 + r_idx * 70, 200, 50)
                     is_unlocked = (selected_lvl_idx < level_manager.highest_level) or (selected_lvl_idx == level_manager.highest_level and r_idx <= level_manager.highest_room)
@@ -184,7 +241,7 @@ while running:
                         level_manager.current_level = selected_lvl_idx
                         level_manager.current_room = r_idx
                         restart_game(player, level_manager)
-                        game_state = "PLAYING"
+                        game_states.push("PLAYING")
 
         elif game_state == "PLAYING":
             if event.type == pygame.KEYDOWN:
@@ -196,19 +253,21 @@ while running:
         elif game_state == "GAMEOVER":
             if event.type == pygame.KEYDOWN:
                 restart_game(player, level_manager)
-                game_state = "PLAYING"
+                game_states.reset("PLAYING")
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if menu_btn_rect.collidepoint(mouse_pos):
-                    game_state = "MAIN_MENU"
+                    game_states.reset("MAIN_MENU")
 
         elif game_state == "WIN":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if menu_btn_rect.collidepoint(mouse_pos):
-                    game_state = "MAIN_MENU"
+                    game_states.reset("MAIN_MENU")
 
         elif game_state == "LEVEL_COMPLETE":
             if event.type == pygame.KEYDOWN or (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1):
-                game_state = "LEVEL_SELECT"
+                game_states.reset("LEVEL_SELECT")
+
+    game_state = game_states.current()
 
     if game_state == "PLAYING":
         active_tiles = [t for t in level_manager.tiles if getattr(t, 'world_id', 0) == level_manager.current_world]
@@ -218,11 +277,13 @@ while running:
         level_manager.update(dt, player)
         status = level_manager.check_room_transition(player)
         if status == "WIN": 
-            game_state = "WIN"
+            game_states.push("WIN")
         elif status == "LEVEL_UP":
-            game_state = "LEVEL_COMPLETE"
+            game_states.push("LEVEL_COMPLETE")
         elif player.health <= 0: 
-            game_state = "GAMEOVER"
+            game_states.push("GAMEOVER")
+
+    game_state = game_states.current()
 
     screen.fill((20, 20, 25))
     
