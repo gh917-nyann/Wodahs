@@ -1,6 +1,6 @@
-## File: main.py
+FILE: main.py
 
-### Module docstring
+--- Module ---
 File chính của game Wodahs.
 
 Mô tả:
@@ -8,7 +8,16 @@ Mô tả:
     - Quản lý lựa chọn level, chọn phòng, vòng lặp game và vẽ giao diện.
 Author: DGHuy
 
-### Function: restart_game
+--- Class GameStateStack ---
+Chức năng chính: Quản lý trạng thái màn hình game bằng cấu trúc dữ liệu Stack.
+
+Chi tiết:
+    - Lưu trạng thái màn hình theo cơ chế LIFO.
+    - Khi chuyển sang màn mới thì đưa trạng thái mới vào Stack.
+    - Khi bấm BACK thì lấy trạng thái hiện tại ra khỏi Stack để quay lại màn trước.
+    - Khi cần chuyển thẳng về một màn cụ thể thì reset Stack.
+
+--- Function restart_game ---
 Đặt lại trạng thái player và tải lại phòng hiện tại.
 
 Input:
@@ -17,7 +26,7 @@ Input:
 Output:
 - Không trả về, chỉ cập nhật trạng thái player và phòng.
 
-### Function: draw_firefly_background
+--- Function draw_firefly_background ---
 Vẽ nền menu với hiệu ứng đom đóm và ánh sáng.
 
 Input:
@@ -27,214 +36,148 @@ Input:
 Output:
 - Không trả về, vẽ trực tiếp lên surface.
 
-## File: entities/item.py
+--- Function __init__ ---
+Khởi tạo Stack với trạng thái ban đầu.
 
-### Module docstring
-Chức năng chính: Quản lý hệ thống vật phẩm.
+Input:
+- initial_state (str): Trạng thái đầu tiên của game.
+
+--- Function current ---
+Lấy trạng thái hiện tại của game.
+
+Output:
+- Trả về trạng thái nằm trên đỉnh Stack.
+
+--- Function push ---
+Thêm trạng thái mới vào Stack.
+
+Input:
+- state (str): Trạng thái cần chuyển tới.
+
+--- Function pop ---
+Quay lại trạng thái trước đó bằng cách xóa trạng thái hiện tại.
+
+--- Function reset ---
+Đặt lại Stack về một trạng thái duy nhất.
+
+Input:
+- state (str): Trạng thái cần đặt lại.
+
+===
+
+FILE: level\tile.py
+
+--- Module ---
+Chức năng chính: Quản lý khối địa hình (Tile) được load từ TMX.
 Author: DGHuy
 
-Chi tiết:
-    - Định nghĩa và xử lý logic cho các vật phẩm tiêu hao (Bình máu, Bình Mana, Bom nổ).
-    - Quản lý số lượng giới hạn và thời gian chờ (Cooldown).
-    - Phục hồi chỉ số cho người chơi.
-    - Xử lý đếm ngược phát nổ, gây sát thương diện rộng và phá gạch nứt.
-
-### Class: HealthPotion
-Chức năng: Vật phẩm Bình Máu.
-
-Chi tiết:
-    - Phục hồi lượng máu nhất định cho player.
-    - Quản lý số lượng mang theo và cooldown giữa các lần uống.
-
-### Class: ManaPotion
-Chức năng: Vật phẩm Bình Năng lượng.
-
-Chi tiết:
-    - Phục hồi năng lượng (Mana) cho player.
-    - Quản lý số lượng và cooldown tương tự bình máu.
-
-### Class: BombItem
-Chức năng: Vật phẩm Bom nổ (AoE).
-
-Chi tiết:
-    - Đặt bom tại vị trí hiện tại của player.
-    - Đếm ngược và phát nổ gây sát thương diện rộng.
-    - Phá hủy các khối gạch nứt trong bán kính nổ.
-
-### Function: __init__
-Chức năng: Khởi tạo bình máu.
-
-Input:
-- heal_amount (int): Lượng HP phục hồi mỗi lần uống.
-- cooldown (float): Thời gian hồi sau khi uống.
-
-### Function: use
-Chức năng: Sử dụng bình máu để hồi HP.
-
-Input:
-- player (Player): Đối tượng player được hồi máu.
-
-### Function: update
-Chức năng: Cập nhật thời gian hồi của bình máu.
-
-Input:
-- dt (float): Delta time.
-
-### Function: __init__
-Chức năng: Khởi tạo bình năng lượng.
-
-Input:
-- restore_amount (int): Lượng Mana phục hồi mỗi lần uống.
-- cooldown (float): Thời gian hồi sau khi uống.
-
-### Function: use
-Chức năng: Sử dụng bình mana để hồi năng lượng.
-
-Input:
-- player (Player): Đối tượng player được hồi mana.
-
-### Function: update
-Chức năng: Cập nhật thời gian hồi của bình mana.
-
-Input:
-- dt (float): Delta time.
-
-### Function: __init__
-Chức năng: Khởi tạo hệ thống bom.
-
-Input:
-- cooldown (float): Thời gian chờ giữa 2 lần đặt bom.
-- fuse_time (float): Thời gian đếm ngược trước khi nổ.
-- damage (int): Sát thương gây ra cho quái.
-- radius (int): Bán kính vụ nổ.
-
-### Function: use
-Chức năng: Đặt bom xuống map.
-
-Input:
-- player_x (float): Tọa độ X của player.
-- player_y (float): Tọa độ Y của player.
-- facing_right (bool): Hướng nhìn để thả bom lệch ra trước mặt.
-
-### Function: update
-Chức năng: Cập nhật đếm ngược bom, xử lý nổ và phá gạch.
-
-Input:
-- dt (float): Delta time.
-- monsters (list): Danh sách quái vật.
-- tiles (list): Danh sách khối địa hình (gạch).
-
-### Function: draw
-Chức năng: Vẽ bom và hiệu ứng nổ.
-
-Input:
-- surface (pygame.Surface): Surface dùng để render.
-
-## File: entities/player.py
-
-### Module docstring
-Định nghĩa hành vi và trạng thái của nhân vật người chơi.
-
-Mô tả:
-    - Quản lý điều khiển, tấn công, kỹ năng và các vật phẩm.
-    - Xử lý va chạm, cập nhật vật lý và giao diện người chơi.
-Author: DGHuy
-
-### Class: Player
-Đối tượng player với di chuyển, kỹ năng và giao diện hiển thị.
-
-### Function: __init__
-Khởi tạo đối tượng player và các kỹ năng, vật phẩm.
-
-Input:
-- x (float): Vị trí spawn X.
-- y (float): Vị trí spawn Y.
-Output:
-- Tạo player với máu, mana, tốc độ và kỹ năng ban đầu.
-
-### Function: inp
-Xử lý đầu vào phím và chuột cho player.
-
-Input:
-- events (list): Danh sách sự kiện Pygame.
-- tiles (list): Danh sách tile để kiểm tra.
-- monsters (list): Danh sách quái vật để tấn công.
-Output:
-- Không trả về, cập nhật trạng thái điều khiển và kỹ năng.
-
-### Function: perform_attack
-Thực hiện đòn đánh cơ bản và tính damage combo.
-
-Input:
-- monsters (list): Danh sách quái vật để gây sát thương.
-Output:
-- Không trả về, kích hoạt basic attack và cập nhật combo.
-
-### Function: move
-Cập nhật vận tốc player theo kiểu di chuyển.
-
-Input:
-- input_type (str): "left", "right", "jump" hoặc "dash".
-Output:
-- Không trả về, chỉ thay đổi vx, vy và trạng thái di chuyển.
-
-### Function: update
-Cập nhật vật lý, kỹ năng và va chạm cho player.
-
-Input:
-- dt (float): Delta time.
-- solid_rects (list): Danh sách tile cứng để kiểm tra va chạm.
-- monsters (list): Danh sách quái vật.
-Output:
-- Không trả về, cập nhật vị trí, trạng thái và kỹ năng.
-
-### Function: check_collision_x
-Kiểm tra và xử lý va chạm theo trục X.
-
-Input:
-- tiles (list): Danh sách tile để kiểm tra va chạm.
-- dt (float): Delta time.
-- monsters (list): Danh sách quái vật để xử lý chạm trục X.
-Output:
-- Không trả về, điều chỉnh vị trí x và vx khi va chạm.
-
-### Function: check_collision_y
-Kiểm tra và xử lý va chạm theo trục Y.
-
-Input:
-- tiles (list): Danh sách tile để kiểm tra va chạm.
-- dt (float): Delta time.
-- monsters (list): Danh sách quái vật để xử lý chạm trục Y.
-Output:
-- Không trả về, điều chỉnh vị trí y và vy khi va chạm.
-
-### Function: draw
-Vẽ player và các hiệu ứng liên quan.
-
-Input:
-- surface (pygame.Surface): Surface để render player.
-Output:
-- Không trả về, vẽ player, kỹ năng và UI.
-
-### Function: draw_ui
-Vẽ thanh HP, MP và combo của player.
-
-Input:
-- surface (pygame.Surface): Surface để render giao diện.
-Output:
-- Không trả về, vẽ các thanh chỉ số và bom.
-
-### Function: clear_active_states
-Xóa trạng thái kỹ năng đang hoạt động và reset cooldown.
+--- Function step_on ---
+Đánh dấu tile giòn khi player bước lên.
 
 Input:
 - Không có.
 Output:
-- Không trả về, chỉ reset trạng thái kỹ năng và effect.
+- Cập nhật self.is_stepped nếu tile có thể vỡ.
 
-## File: entities/monster.py
+--- Function update ---
+Cập nhật trạng thái gạch giòn và hồi phục.
 
-### Module docstring
+Input:
+- dt (float): Delta time.
+Output:
+- Không trả về, điều khiển thời gian vỡ và hồi sinh.
+
+--- Function draw ---
+Vẽ tile lên màn hình nếu chưa bị vỡ.
+
+Input:
+- surface (pygame.Surface): Surface để render tile.
+Output:
+- Không trả về, vẽ hình ảnh hoặc màu tile.
+
+--- Function draw_silhouette ---
+Vẽ bóng mờ của tile khi tile nằm ngoài thế giới hiện tại.
+
+Input:
+- surface (pygame.Surface): Surface để render silhouette.
+Output:
+- Không trả về, vẽ bóng mờ hoặc viền xám.
+
+===
+
+FILE: level\level_manager.py
+
+--- Module ---
+Quản lý phòng, map và chuyển thế giới cho game.
+
+Mô tả:
+    - Tải dữ liệu TMX cho các phòng trong từng level.
+    - Quản lý tile, monster, cửa và spawn player.
+    - Xử lý chuyển room/level và cập nhật render.
+Author: DGHuy
+
+--- Class LevelManager ---
+Quản lý trạng thái level và phòng của game.
+
+Input:
+- rooms_per_level (list): Số lượng phòng cho mỗi level.
+Output:
+- Tạo đối tượng quản lý các tile, quái, cửa và spawn point.
+
+--- Function flip_world ---
+Đổi thế giới hiện tại giữa 0 và 1.
+
+Input:
+- Không có.
+Output:
+- Không trả về, chỉ cập nhật current_world.
+
+--- Function resolve_overlap ---
+Di chuyển player ra khỏi tile chồng nhau sau khi flip world.
+
+Input:
+- player (Player): Player có thể bị chồng lên tile.
+Output:
+- Không trả về, chỉ điều chỉnh vị trí player.
+
+--- Function load_room ---
+Tải lại dữ liệu TMX cho phòng hiện tại.
+
+Input:
+- Không có.
+Output:
+- Cập nhật self.tiles, self.monsters và self.doors từ file TMX.
+
+--- Function check_room_transition ---
+Kiểm tra điều kiện chuyển phòng hoặc chiến thắng.
+
+Input:
+- player (Player): Đối tượng player để kiểm tra va chạm cửa.
+Output:
+- Trả về False, True, "LEVEL_UP" hoặc "WIN" tùy trạng thái.
+
+--- Function update ---
+Cập nhật trạng thái tile và quái trong phòng.
+
+Input:
+- dt (float): Delta time.
+- player (Player): Player để truyền cho quái.
+Output:
+- Không trả về, cập nhật tile, quái và loại bỏ quái chết.
+
+--- Function draw ---
+Vẽ phòng, nền và quái vật theo thế giới hiện tại.
+
+Input:
+- surface (pygame.Surface): Surface để render.
+Output:
+- Không trả về, vẽ nền, tile và quái.
+
+===
+
+FILE: entities\monster.py
+
+--- Module ---
 Định nghĩa quái vật thường và hành vi đơn giản.
 
 Mô tả:
@@ -242,10 +185,10 @@ Mô tả:
     - Hỗ trợ AI đơn giản cho patrol, chase và attack.
 Author: DGHuy
 
-### Class: Monster
+--- Class Monster ---
 Thực thể quái vật với trạng thái patrol, chase và attack.
 
-### Function: __init__
+--- Function __init__ ---
 Khởi tạo quái vật cơ bản.
 
 Input:
@@ -255,7 +198,15 @@ Input:
 Output:
 - Tạo quái với thuộc tính di chuyển, máu, sát thương và hitbox.
 
-### Function: update
+--- Function load_animations ---
+Tải các khung hình animation cho quái vật từ sprite sheet (ảnh dài).
+
+Input:
+- Không có.
+Output:
+- Khởi tạo danh sách hình ảnh cho các trạng thái walk và attack bằng cách cắt ảnh.
+
+--- Function update ---
 Cập nhật hành vi, di chuyển và va chạm của quái.
 
 Input:
@@ -265,7 +216,7 @@ Input:
 Output:
 - Cập nhật vị trí quái, trạng thái và đạn bắn.
 
-### Function: draw
+--- Function draw ---
 Vẽ quái vật và thanh máu.
 
 Input:
@@ -273,7 +224,7 @@ Input:
 Output:
 - Không trả về, hiển thị hình quái và thanh HP.
 
-### Function: draw_silhouette
+--- Function draw_silhouette ---
 Vẽ phiên bản bóng tối của quái khi ở thế giới khác.
 
 Input:
@@ -281,29 +232,140 @@ Input:
 Output:
 - Không trả về, vẽ hình dạng đơn giản của quái.
 
-## File: entities/boss.py
+===
 
-### Module docstring
+FILE: entities\item.py
+
+--- Module ---
+Chức năng chính: Quản lý hệ thống vật phẩm.
+Author: DGHuy
+
+Chi tiết:
+    - Định nghĩa và xử lý logic cho các vật phẩm tiêu hao (Bình máu, Bình Mana, Bom nổ).
+    - Quản lý số lượng giới hạn và thời gian chờ (Cooldown).
+    - Phục hồi chỉ số cho người chơi.
+    - Xử lý đếm ngược phát nổ, gây sát thương diện rộng và phá gạch nứt.
+
+--- Class HealthPotion ---
+Chức năng: Vật phẩm Bình Máu.
+
+Chi tiết:
+    - Phục hồi lượng máu nhất định cho player.
+    - Quản lý số lượng mang theo và cooldown giữa các lần uống.
+
+--- Class ManaPotion ---
+Chức năng: Vật phẩm Bình Năng lượng.
+
+Chi tiết:
+    - Phục hồi năng lượng (Mana) cho player.
+    - Quản lý số lượng và cooldown tương tự bình máu.
+
+--- Class BombItem ---
+Chức năng: Vật phẩm Bom nổ (AoE).
+
+Chi tiết:
+    - Đặt bom tại vị trí hiện tại của player.
+    - Đếm ngược và phát nổ gây sát thương diện rộng.
+    - Phá hủy các khối gạch nứt trong bán kính nổ.
+
+--- Function __init__ ---
+Chức năng: Khởi tạo bình máu.
+
+Input:
+- heal_amount (int): Lượng HP phục hồi mỗi lần uống.
+- cooldown (float): Thời gian hồi sau khi uống.
+
+--- Function use ---
+Chức năng: Sử dụng bình máu để hồi HP.
+
+Input:
+- player (Player): Đối tượng player được hồi máu.
+
+--- Function update ---
+Chức năng: Cập nhật thời gian hồi của bình máu.
+
+Input:
+- dt (float): Delta time.
+
+--- Function __init__ ---
+Chức năng: Khởi tạo bình năng lượng.
+
+Input:
+- restore_amount (int): Lượng Mana phục hồi mỗi lần uống.
+- cooldown (float): Thời gian hồi sau khi uống.
+
+--- Function use ---
+Chức năng: Sử dụng bình mana để hồi năng lượng.
+
+Input:
+- player (Player): Đối tượng player được hồi mana.
+
+--- Function update ---
+Chức năng: Cập nhật thời gian hồi của bình mana.
+
+Input:
+- dt (float): Delta time.
+
+--- Function __init__ ---
+Chức năng: Khởi tạo hệ thống bom.
+
+Input:
+- cooldown (float): Thời gian chờ giữa 2 lần đặt bom.
+- fuse_time (float): Thời gian đếm ngược trước khi nổ.
+- damage (int): Sát thương gây ra cho quái.
+- radius (int): Bán kính vụ nổ.
+
+--- Function use ---
+Chức năng: Đặt bom xuống map.
+
+Input:
+- player_x (float): Tọa độ X của player.
+- player_y (float): Tọa độ Y của player.
+- facing_right (bool): Hướng nhìn để thả bom lệch ra trước mặt.
+
+--- Function update ---
+Chức năng: Cập nhật đếm ngược bom, xử lý nổ và phá gạch.
+
+Input:
+- dt (float): Delta time.
+- monsters (list): Danh sách quái vật.
+- tiles (list): Danh sách khối địa hình (gạch).
+
+--- Function draw ---
+Chức năng: Vẽ bom và hiệu ứng nổ.
+
+Input:
+- surface (pygame.Surface): Surface dùng để render.
+
+===
+
+FILE: entities\boss.py
+
+--- Module ---
 Quản lý boss chính và hành vi tấn công trong game.
 
 Mô tả:
     - Điều khiển AI boss, trạng thái giận dữ, và đòn tấn công.
-    - Tạo đạn, triệu hồi quái và vẽ boss lên màn hình.
+    - Tạo đạn, triệu hồi quái và vẽ boss lên màn hình bằng ảnh tĩnh.
+    - Cảnh báo chớp đỏ màn hình khi chuyển pha giận dữ.
 Author: DGHuy
 
-### Class: Boss
+--- Class Boss ---
 Thực thể boss với cơ chế di chuyển, tấn công và kích hoạt giận dữ.
 
-### Function: __init__
+--- Function __init__ ---
 Khởi tạo boss tại vị trí chỉ định.
 
 Input:
 - x (float): Tọa độ X ban đầu.
 - y (float): Tọa độ Y ban đầu.
 Output:
-- Tạo boss với máu, sát thương, hitbox và trạng thái ban đầu.
+- Tạo boss với máu, sát thương, hitbox và hình ảnh tĩnh.
 
-### Function: take_damage
+--- Function load_image ---
+Tải ảnh tĩnh cho Boss từ thư mục assets.
+
+--- Function take_damage ---
 Boss nhận sát thương và kích hoạt trạng thái giận dữ nếu thấp máu.
 
 Input:
@@ -313,54 +375,134 @@ Input:
 Output:
 - Cập nhật máu boss, tốc độ và trạng thái enraged.
 
-### Function: spawn_monsters
+--- Function spawn_monsters ---
 Triệu hồi quái vật hỗ trợ khi boss giận dữ.
 
-Input:
-- player (Player): Player để xác định vị trí spawn.
-- all_monsters (list): Danh sách quái để thêm quái mới.
-- current_world (int): Thế giới để gán cho quái.
-Output:
-- Thêm quái mới vào all_monsters.
-
-### Function: attack_circle
+--- Function attack_circle ---
 Tạo một vòng đạn quây quanh boss.
+
+--- Function update ---
+Cập nhật hành vi boss, đạn và va chạm với player.
+
+--- Function draw ---
+Vẽ boss, đạn, thanh máu và hiệu ứng toàn màn hình.
+
+===
+
+FILE: entities\player.py
+
+--- Module ---
+Định nghĩa hành vi và trạng thái của nhân vật người chơi.
+
+Mô tả:
+    - Quản lý điều khiển, tấn công, kỹ năng và các vật phẩm.
+    - Xử lý va chạm, cập nhật vật lý và giao diện người chơi.
+Author: DGHuy
+
+--- Class Player ---
+Đối tượng player với di chuyển, kỹ năng và giao diện hiển thị.
+
+--- Function __init__ ---
+Khởi tạo đối tượng player và các kỹ năng, vật phẩm.
+
+Input:
+- x (float): Vị trí spawn X.
+- y (float): Vị trí spawn Y.
+Output:
+- Tạo player với máu, mana, tốc độ và kỹ năng ban đầu.
+
+--- Function load_animations ---
+Tải ảnh sprite sheet, cắt frame, scale to và lưu vào dictionary.
+
+Mô tả:
+- Tải các file dải ảnh dài uncropped từ image_0.png... image_3.png.
+- Cắt frame, scale tất cả uncropped frames lên self.draw_width x self.draw_height.
+
+--- Function inp ---
+Xử lý đầu vào phím và chuột cho player.
+
+Input:
+- events (list): Danh sách sự kiện Pygame.
+- tiles (list): Danh sách tile để kiểm tra.
+- monsters (list): Danh sách quái vật để tấn công.
+Output:
+- Không trả về, cập nhật trạng thái điều khiển và kỹ năng.
+
+--- Function perform_attack ---
+Thực hiện đòn đánh cơ bản và tính damage combo.
+
+Input:
+- monsters (list): Danh sách quái vật để gây sát thương.
+Output:
+- Không trả về, kích hoạt basic attack và cập nhật combo.
+
+--- Function move ---
+Cập nhật vận tốc player theo kiểu di chuyển.
+
+Input:
+- input_type (str): "left", "right", "jump" hoặc "dash".
+Output:
+- Không trả về, chỉ thay đổi vx, vy và trạng thái di chuyển.
+
+--- Function update ---
+Cập nhật vật lý, kỹ năng và va chạm cho player.
+
+Input:
+- dt (float): Delta time.
+- solid_rects (list): Danh sách tile cứng để kiểm tra va chạm.
+- monsters (list): Danh sách quái vật.
+Output:
+- Không trả về, cập nhật vị trí, trạng thái và kỹ năng.
+
+--- Function check_collision_x ---
+Kiểm tra và xử lý va chạm theo trục X.
+
+Input:
+- tiles (list): Danh sách tile để kiểm tra va chạm.
+- dt (float): Delta time.
+- monsters (list): Danh sách quái vật để xử lý chạm trục X.
+Output:
+- Không trả về, điều chỉnh vị trí x và vx khi va chạm.
+
+--- Function check_collision_y ---
+Kiểm tra và xử lý va chạm theo trục Y.
+
+Input:
+- tiles (list): Danh sách tile để kiểm tra va chạm.
+- dt (float): Delta time.
+- monsters (list): Danh sách quái vật để xử lý chạm trục Y.
+Output:
+- Không trả về, điều chỉnh vị trí y và vy khi va chạm.
+
+--- Function draw ---
+Vẽ player và các hiệu ứng liên quan.
+
+Input:
+- surface (pygame.Surface): Surface để render player.
+Output:
+- Không trả về, vẽ player, kỹ năng và UI.
+
+--- Function draw_ui ---
+Vẽ thanh HP, MP và combo của player.
+
+Input:
+- surface (pygame.Surface): Surface để render giao diện.
+Output:
+- Không trả về, vẽ các thanh chỉ số và bom.
+
+--- Function clear_active_states ---
+Xóa trạng thái kỹ năng đang hoạt động và reset cooldown.
 
 Input:
 - Không có.
 Output:
-- Thêm projectile vào self.projectiles.
+- Không trả về, chỉ reset trạng thái kỹ năng và effect.
 
-### Function: update
-Cập nhật hành vi boss, đạn và va chạm với player.
+===
 
-Input:
-- dt (float): Delta time.
-- player (Player): Player mục tiêu.
-- all_monsters (list): Danh sách quái để thêm summon.
-- current_world (int): Thế giới hiện tại.
-Output:
-- Cập nhật vị trí, trạng thái, đạn và sát thương boss.
+FILE: entities\skill.py
 
-### Function: draw
-Vẽ boss và thanh máu lên màn hình.
-
-Input:
-- surface (pygame.Surface): Surface để render boss.
-Output:
-- Không trả về, vẽ trực tiếp boss, mắt và thanh máu.
-
-### Function: draw_silhouette
-Vẽ bóng mờ boss khi boss không cùng thế giới.
-
-Input:
-- surface (pygame.Surface): Surface để render.
-Output:
-- Không trả về, vẽ bóng mờ nếu cần.
-
-## File: entities/skill.py
-
-### Module docstring
+--- Module ---
 Chức năng chính: Xử lý toàn bộ kỹ năng chiến đấu của player.
 Author: DGHuy
 
@@ -370,7 +512,7 @@ Chi tiết:
     - Xử lý hitbox, va chạm và sát thương lên quái vật.
     - Cập nhật hiệu ứng buff/debuff và render kỹ năng lên màn hình.
 
-### Class: BasicAttack
+--- Class BasicAttack ---
 Chức năng: Đòn đánh cận chiến cơ bản của player.
 
 Chi tiết:
@@ -379,7 +521,7 @@ Chi tiết:
     - Gây sát thương và knockback.
     - Ngăn một quái nhận damage nhiều lần trong cùng đòn đánh.
 
-### Class: ShadowClone
+--- Class ShadowClone ---
 Chức năng: Kỹ năng tạo phân thân bóng tối.
 
 Chi tiết:
@@ -387,7 +529,7 @@ Chi tiết:
     - Tái kích hoạt để lướt ngay lập tức về phía ảo ảnh.
     - Gây sát thương toàn bộ quái vật trên đường bay về.
 
-### Class: ShadowSword
+--- Class ShadowSword ---
 Chức năng: Kỹ năng bắn kiếm ảnh xuyên thấu.
 
 Chi tiết:
@@ -396,7 +538,7 @@ Chi tiết:
     - Kiếm bay xuyên thấu quái và địa hình, giảm dần sát thương và tốc độ.
     - Tự hủy khi xuyên quá giới hạn hoặc bay ra ngoài map.
 
-### Class: ShadowArea
+--- Class ShadowArea ---
 Chức năng: Kỹ năng tạo lãnh địa bóng tối (AoE).
 
 Chi tiết:
@@ -404,7 +546,7 @@ Chi tiết:
     - Buff cho player: Tăng sát thương và phòng thủ khi đứng trong vùng.
     - Debuff cho quái vật: Làm chậm tốc độ di chuyển khi bước vào.
 
-### Function: __init__
+--- Function __init__ ---
 Chức năng: Khởi tạo đòn đánh cơ bản.
 
 Input:
@@ -413,7 +555,7 @@ Input:
 - range_x (int): Độ rộng hitbox.
 - range_y (int): Độ cao hitbox.
 
-### Function: use
+--- Function use ---
 Chức năng: Kích hoạt đòn đánh nếu đã hết cooldown.
 
 Input:
@@ -423,7 +565,7 @@ Input:
 - monsters (list): Danh sách quái vật.
 - knockback (int): Lực đẩy lùi.
 
-### Function: update_hitbox
+--- Function update_hitbox ---
 Chức năng: Cập nhật vị trí hitbox theo player.
 
 Input:
@@ -431,14 +573,14 @@ Input:
 - py (float): Tọa độ Y của player.
 - facing_right (bool): Hướng nhìn hiện tại.
 
-### Function: check_hit
+--- Function check_hit ---
 Chức năng: Kiểm tra va chạm và gây sát thương.
 
 Input:
 - monsters (list): Danh sách quái vật.
 - facing_right (bool): Hướng nhìn để tính knockback.
 
-### Function: update
+--- Function update ---
 Chức năng: Cập nhật cooldown và hitbox đòn đánh.
 
 Input:
@@ -448,13 +590,7 @@ Input:
 - facing_right (bool): Hướng nhìn hiện tại.
 - monsters (list): Danh sách quái vật.
 
-### Function: draw
-Chức năng: Vẽ hitbox đòn đánh.
-
-Input:
-- surface (pygame.Surface): Surface dùng để render.
-
-### Function: __init__
+--- Function __init__ ---
 Chức năng: Khởi tạo kỹ năng phân thân.
 
 Input:
@@ -462,27 +598,31 @@ Input:
 - duration (float): Thời gian tồn tại tối đa của ảo ảnh.
 - damage (int): Sát thương gây ra khi lướt.
 
-### Function: use
+--- Function use ---
 Chức năng: Kích hoạt tạo ảo ảnh hoặc lướt về ảo ảnh đang có.
 
 Input:
 - player_x (float): Tọa độ X của player.
 - player_y (float): Tọa độ Y của player.
+- player_surface (pygame.Surface): Hình ảnh hiện tại của player.
+- facing_right (bool): Hướng nhìn hiện tại của player.
 
-### Function: update
+--- Function update ---
 Chức năng: Cập nhật thời gian tồn tại và xử lý sát thương lướt.
 
 Input:
 - dt (float): Delta time.
 - monsters (list): Danh sách quái vật.
 
-### Function: draw
-Chức năng: Vẽ hình ảnh phân thân.
+--- Function draw ---
+Chức năng: Vẽ hình ảnh phân thân dạng bóng đen.
 
 Input:
 - surface (pygame.Surface): Surface dùng để render.
+- offset_x (int): Độ lệch X (dùng cho canvas to/hitbox bé).
+- offset_y (int): Độ lệch Y (dùng cho canvas to/hitbox bé).
 
-### Function: __init__
+--- Function __init__ ---
 Chức năng: Khởi tạo kỹ năng kiếm ảnh.
 
 Input:
@@ -491,7 +631,7 @@ Input:
 - damage (int): Sát thương gốc của mỗi thanh kiếm.
 - speed (float): Tốc độ bay của kiếm.
 
-### Function: use
+--- Function use ---
 Chức năng: Triệu hồi kiếm hoặc bắn kiếm về vị trí chỉ định.
 
 Input:
@@ -500,7 +640,7 @@ Input:
 - target_x (float): Tọa độ X của mục tiêu (chuột).
 - target_y (float): Tọa độ Y của mục tiêu (chuột).
 
-### Function: update
+--- Function update ---
 Chức năng: Cập nhật vị trí, xử lý va chạm xuyên thấu và giảm trừ chỉ số kiếm.
 
 Input:
@@ -510,13 +650,13 @@ Input:
 - solid_rects (list): Danh sách gạch địa hình.
 - monsters (list): Danh sách quái vật.
 
-### Function: draw
+--- Function draw ---
 Chức năng: Vẽ các thanh kiếm lên màn hình.
 
 Input:
 - surface (pygame.Surface): Surface dùng để render.
 
-### Function: __init__
+--- Function __init__ ---
 Chức năng: Khởi tạo lãnh địa bóng tối.
 
 Input:
@@ -524,14 +664,14 @@ Input:
 - duration (float): Thời gian tồn tại của vùng lãnh địa.
 - radius (int): Bán kính vùng hiệu ứng.
 
-### Function: use
+--- Function use ---
 Chức năng: Kích hoạt lãnh địa tại vị trí hiện tại của player.
 
 Input:
 - player_x (float): Tọa độ X của player.
 - player_y (float): Tọa độ Y của player.
 
-### Function: update
+--- Function update ---
 Chức năng: Cập nhật thời gian tồn tại, áp dụng buff và debuff.
 
 Input:
@@ -539,114 +679,11 @@ Input:
 - player (Player): Đối tượng player (để xét buff).
 - monsters (list): Danh sách quái vật (để xét debuff).
 
-### Function: draw
+--- Function draw ---
 Chức năng: Vẽ vùng lãnh địa bán trong suốt.
 
 Input:
 - surface (pygame.Surface): Surface dùng để render.
 
-## File: level/level_manager.py
+===
 
-### Module docstring
-Quản lý phòng, map và chuyển thế giới cho game.
-
-Mô tả:
-    - Tải dữ liệu TMX cho các phòng trong từng level.
-    - Quản lý tile, monster, cửa và spawn player.
-    - Xử lý chuyển room/level và cập nhật render.
-Author: DGHuy
-
-### Class: LevelManager
-Quản lý trạng thái level và phòng của game.
-
-Input:
-- rooms_per_level (list): Số lượng phòng cho mỗi level.
-Output:
-- Tạo đối tượng quản lý các tile, quái, cửa và spawn point.
-
-### Function: flip_world
-Đổi thế giới hiện tại giữa 0 và 1.
-
-Input:
-- Không có.
-Output:
-- Không trả về, chỉ cập nhật current_world.
-
-### Function: resolve_overlap
-Di chuyển player ra khỏi tile chồng nhau sau khi flip world.
-
-Input:
-- player (Player): Player có thể bị chồng lên tile.
-Output:
-- Không trả về, chỉ điều chỉnh vị trí player.
-
-### Function: load_room
-Tải lại dữ liệu TMX cho phòng hiện tại.
-
-Input:
-- Không có.
-Output:
-- Cập nhật self.tiles, self.monsters và self.doors từ file TMX.
-
-### Function: check_room_transition
-Kiểm tra điều kiện chuyển phòng hoặc chiến thắng.
-
-Input:
-- player (Player): Đối tượng player để kiểm tra va chạm cửa.
-Output:
-- Trả về False, True, "LEVEL_UP" hoặc "WIN" tùy trạng thái.
-
-### Function: update
-Cập nhật trạng thái tile và quái trong phòng.
-
-Input:
-- dt (float): Delta time.
-- player (Player): Player để truyền cho quái.
-Output:
-- Không trả về, cập nhật tile, quái và loại bỏ quái chết.
-
-### Function: draw
-Vẽ phòng, nền và quái vật theo thế giới hiện tại.
-
-Input:
-- surface (pygame.Surface): Surface để render.
-Output:
-- Không trả về, vẽ nền, tile và quái.
-
-## File: level/tile.py
-
-### Module docstring
-Chức năng chính: Quản lý khối địa hình (Tile) được load từ TMX.
-Author: DGHuy
-
-### Function: step_on
-Đánh dấu tile giòn khi player bước lên.
-
-Input:
-- Không có.
-Output:
-- Cập nhật self.is_stepped nếu tile có thể vỡ.
-
-### Function: update
-Cập nhật trạng thái gạch giòn và hồi phục.
-
-Input:
-- dt (float): Delta time.
-Output:
-- Không trả về, điều khiển thời gian vỡ và hồi sinh.
-
-### Function: draw
-Vẽ tile lên màn hình nếu chưa bị vỡ.
-
-Input:
-- surface (pygame.Surface): Surface để render tile.
-Output:
-- Không trả về, vẽ hình ảnh hoặc màu tile.
-
-### Function: draw_silhouette
-Vẽ bóng mờ của tile khi tile nằm ngoài thế giới hiện tại.
-
-Input:
-- surface (pygame.Surface): Surface để render silhouette.
-Output:
-- Không trả về, vẽ bóng mờ hoặc viền xám.
